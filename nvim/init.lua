@@ -16,12 +16,14 @@ end
 -------------------- PLUGINS -------------------------------
 cmd 'packadd paq-nvim'
 local paq = require('paq-nvim').paq
+paq {'SirVer/ultisnips'}
+paq {'honza/vim-snippets'}
+paq {'jiangmiao/auto-pairs'}
 paq {'airblade/vim-gitgutter'}
 paq {'airblade/vim-rooter'}
 paq {'joshdick/onedark.vim'}
 paq {'junegunn/fzf'}
 paq {'junegunn/fzf.vim'}
--- paq {'justinmk/vim-dirvish'}
 paq {'lervag/vimtex'}
 paq {'machakann/vim-sandwich'}
 paq {'neovim/nvim-lspconfig'}
@@ -46,6 +48,33 @@ paq {'nvim-telescope/telescope.nvim'}
 paq {'dense-analysis/ale'}
 
 -------------------- PLUGIN SETUP --------------------------
+-- rooter
+g['rooter_manual_only'] = 1
+
+-- ultisnips
+g['UltiSnipsExpandTrigger'] = "<tab>"
+g['UltiSnipsJumpForwardTrigger'] = "<c-b>"
+g['UltiSnipsJumpBackwardTrigger'] = "<c-z>"
+g['UltiSnipsEditSplit'] = "vertical"
+
+-- telescope
+require('telescope').setup {
+  defaults = {
+    vimgrep_arguments = {
+      'rg',
+      '--color=auto',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case'
+    },
+    set_env = { ['COLORTERM'] = 'truecolor' },
+    -- file_previewer = require'telescope.previewers'.vim_buffer_cat.new, -- For buffer previewer use `require'telescope.previewers'.vim_buffer_cat.new`
+    -- grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new, -- For buffer previewer use `require'telescope.previewers'.vim_buffer_vimgrep.new`
+    -- qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new, -- For buffer previewer use `require'telescope.previewers'.vim_buffer_qflist.new`
+  }
+}
 -- ale
 g['ale_set_loclist'] = 0
 g['ale_set_quickfix'] = 1
@@ -62,8 +91,6 @@ map('n', '<leader>bs', '<cmd>BuildMeStop<CR>')
 g['deoplete#enable_at_startup'] = 1
 fn['deoplete#custom#option']('ignore_case', false)
 fn['deoplete#custom#option']('max_list', 10)
--- dirvish
--- g['dirvish_mode'] = [[:sort ,^.*[\/],]]
 -- fzf
 -- map('n', '<C-p>', '<cmd>Files<CR>')
 -- map('n', '<leader>g', '<cmd>Commits<CR>')
@@ -101,7 +128,8 @@ opt('b', 'shiftwidth', indent)            -- Size of an indent
 opt('b', 'smartindent', true)             -- Insert indents automatically
 opt('b', 'tabstop', indent)               -- Number of spaces tabs count for
 opt('b', 'textwidth', width)              -- Maximum width of text
-opt('o', 'completeopt', 'menuone,noinsert,noselect')  -- Completion options
+opt('o', 'completeopt', 'longest,menuone')  -- Completion options
+-- opt('o', 'completeopt', 'menuone,noinsert,noselect')  -- Completion options
 opt('o', 'hidden', true)                  -- Enable background buffers
 opt('o', 'ignorecase', true)              -- Ignore case
 opt('o', 'joinspaces', false)             -- No double spaces with join
@@ -129,6 +157,7 @@ map('i', '<C-u>', '<C-g>u<C-u>')
 map('i', '<C-w>', '<C-g>u<C-w>')
 map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', {expr = true})
 map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
+map('i', '<CR>', 'pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"', {expr = true})
 map('i', 'jj', '<ESC>')
 map('n', '<C-l>', '<cmd>nohlsearch<CR>')
 map('n', '<C-w>ts', '<cmd>split<bar>terminal<CR>')
@@ -155,9 +184,9 @@ map('n', 'S', '<cmd>bn<CR>')
 map('n', 'U', '<cmd>lua warn_caps()<CR>')
 map('n', 'X', '<cmd>bp<CR>')
 map('n', '<leader>ff', '<cmd>Telescope find_files<CR>')
-map('n', '<C-p>', '<cmd>Telescope find_files<CR>')
+-- map('n', '<C-p>', '<cmd>Telescope find_files<CR>')
 map('n', '<leader>fg', '<cmd>Telescope live_grep<CR>')
-map('n', '<leader>p', '<cmd>Telescope live_grep<CR>')
+-- map('n', '<leader>p', '<cmd>Telescope live_grep<CR>')
 map('n', '<leader>fb', '<cmd>Telescope buffers<CR>')
 map('n', 's', 'Telescope buffers<CR>')
 map('n', '<leader>fh', '<cmd>Telescope help_tags<CR>')
@@ -167,6 +196,8 @@ map('n', '<leader>ft', '<cmd>Telescope treesitter<CR>')
 map('n', '<leader>gc', '<cmd>Telescope git_commits<CR>')
 map('n', '<leader>gb', '<cmd>Telescope git_branches<CR>')
 map('n', '<leader>gs', '<cmd>Telescope git_status<CR>')
+map('n', '<leader>km', '<cmd>Telescope keymaps<CR>')
+map('n', '<leader>fo', '<cmd>Telescope vim_options<CR>')
 map('t', '<ESC>', '&filetype == "fzf" ? "\\<ESC>" : "\\<C-\\>\\<C-n>"' , {expr = true})
 map('t', 'jj', '<ESC>', {noremap = false})
 map('v', '<leader>s', ':s//gcI<Left><Left><Left><Left>')
@@ -222,4 +253,5 @@ vim.tbl_map(function(c) cmd(string.format('autocmd %s', c)) end, {
   'TermOpen * lua init_term()',
   'TextYankPost * lua vim.highlight.on_yank {on_visual = false, timeout = 200}',
   'TextYankPost * if v:event.operator is "y" && v:event.regname is "+" | OSCYankReg + | endif',
+  'FileType TelescopePrompt call deoplete#custom#buffer_option("auto_complete", v:false)',
 })
