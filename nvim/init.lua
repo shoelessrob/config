@@ -46,8 +46,11 @@ paq {'nvim-lua/popup.nvim'}
 paq {'nvim-lua/plenary.nvim'}
 paq {'nvim-telescope/telescope.nvim'}
 paq {'dense-analysis/ale'}
+paq {'vimwiki/vimwiki'}
 
 -------------------- PLUGIN SETUP --------------------------
+-- vimwiki
+g['vimwiki_list'] = {{path = '~/vimwiki', syntax = 'markdown', ext = '.md'}}
 -- rooter
 g['rooter_manual_only'] = 1
 
